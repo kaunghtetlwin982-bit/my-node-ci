@@ -3,6 +3,8 @@ name: Node.js CI
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-and-test:
@@ -15,7 +17,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24' # Updated to 24 to stop the warning
+          cache: 'npm'
 
-      - name: Dummy Test
-        run: echo "Hello! အခုလိုရေးရင် Error မတက်တော့ပါဘူး!"
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Run Tests
+        # We add this flag to handle ES Modules correctly in CI
+        run: NODE_OPTIONS=--experimental-vm-modules npm test
