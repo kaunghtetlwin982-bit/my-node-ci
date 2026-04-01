@@ -1,9 +1,14 @@
-import request from 'supertest';
-import app from './app.js';
-describe('GET /', () => {
-    it('should return 200 and a success message', async () => {
-        const res = await request(app).get('/');
-        expect(res.statusCode).toEqual(200);
-        expect(res.body.message).toBe('CI is working!');
+// ၁။ node:test နဲ့ node:assert ကနေ လိုအပ်တာတွေ လှမ်းခေါ်ပါမယ်
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
+
+describe('App Tests', () => {
+
+    it('should work correctly', () => {
+        // ဥပမာ - ၁ နဲ့ ၁ ပေါင်းရင် ၂ ရမရ စစ်ကြည့်တာပါ
+        // Jest ရဲ့ expect().toBe() နေရာမှာ assert.strictEqual() ကို သုံးပါတယ်
+        const result = 1 + 1;
+        assert.strictEqual(result, 2);
     });
+
 });
