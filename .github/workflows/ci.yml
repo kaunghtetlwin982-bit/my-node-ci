@@ -46,13 +46,71 @@ jobs:
         run: npm run build
      
 
+      name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sms_new
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24' # Updated to 24 to stop the warning
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Prisma Generate
+        run: npx prisma generate
+        
+      - name: Check Formatting
+        run: npm run format:check
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Build TypeScript
+        run: npm run build
+     
+
       - name: Prisma Generate & Migrate
         env:
-          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/sms_new"
-        run: |
+          - name: Run Tests
+        env:
+          # Secrets တွေကို ပြန်ခေါ်သုံးပုံ
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+        run: NODE_OPTIONS=--experimental-vm-modules npm test
           npx prisma generate
           npx prisma db push
 
       - name: Run Tests
         # We add this flag to handle ES Modules correctly in CI
         run: NODE_OPTIONS=--experimental-vm-modules npm test
+
+     
