@@ -59,7 +59,14 @@ describe('Database Integration Tests', () => {
 
     // အလုပ်ပြီးရင် Prisma connection ပိတ်မယ်
     after(async () => {
+        console.log("Cleaning up and exiting...");
         await prisma.$disconnect();
+
+        // GitHub Actions မှာ Server Hanging ဖြစ်တာကို တားဖို့အတွက် 
+        // Test အကုန်ပြီးတာနဲ့ Process ကို အတင်းပိတ်ခိုင်းလိုက်တာပါ
+        setTimeout(() => {
+            process.exit(0);
+        }, 500);
     });
 });
 
