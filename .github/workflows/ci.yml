@@ -7,6 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
+  # ပထမ Job: Code စစ်ဆေးပြီး Test Run တဲ့အပိုင်း
   build-and-test:
     runs-on: ubuntu-latest
     
@@ -61,3 +62,31 @@ jobs:
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
         run: NODE_OPTIONS=--experimental-vm-modules npm test
+
+  # ဒုတိယ Job: Test အောင်ရင် Server ပေါ်တင်မယ့်အပိုင်း (CD)
+  deploy:
+    needs: build-and-test # build-and-test အောင်မှ လုပ်မယ်
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # ၁။ Project folder ထဲကို အရင်ဝင်မယ်
+            cd ${{ secrets.SERVER_DEST }}
+            
+            # ၂။ GitHub ကနေ နောက်ဆုံး code တွေကို ဆွဲယူမယ်
+            git pull origin main
+            
+            # ၃။ လိုအပ်တာတွေ သွင်းပြီး Build ဆွဲမယ်
+            npm install --legacy-peer-deps
+            npx prisma generate
+            npm run build
+            
+            # ၄။ PM2 နဲ့ App ကို Restart ချမယ်
+            pm2 restart my-node-ci || pm2 start dist/app.js --name "my-node-ci"
