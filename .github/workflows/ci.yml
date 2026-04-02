@@ -32,6 +32,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
+
+      - name: Prisma Generate
+        run: npx prisma generate
         
       - name: Check Formatting
         run: npm run format:check
@@ -41,9 +44,7 @@ jobs:
 
       - name: Build TypeScript
         run: npm run build
-
-      - name: Prisma Generate
-        run: npx prisma generate
+     
 
       - name: Prisma Generate & Migrate
         env:
