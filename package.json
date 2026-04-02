@@ -5,18 +5,23 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "test": "node --experimental-strip-types --test src/**/*.test.ts",
+    "test": "node --test dist/**/*.test.js",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "format": "prettier --write src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev": "node dist/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "@prisma/adapter-mariadb": "^7.6.0",
+    "@prisma/client": "^7.6.0",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "mariadb": "^3.5.2"
   },
   "type": "module",
   "devDependencies": {
@@ -27,11 +32,12 @@
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.4.0",
+    "husky": "^8.0.0",
     "prettier": "^3.8.1",
+    "prisma": "^7.6.0",
     "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.0",
-    "husky": "^8.0.0"
+    "typescript-eslint": "^8.58.0"
   }
 }

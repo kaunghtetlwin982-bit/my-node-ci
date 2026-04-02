@@ -13,17 +13,13 @@
     "verbatimModuleSyntax": true,
     "types": [
       "node"
-    ]
+    ],
+    "noImplicitAny": true
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "src/**/*.test.ts"
-  ],
-  "strict": true, // အမှားတွေကို အသေအချာ စစ်ခိုင်းတာ
-  "noImplicitAny": true, // any ကို အလကားပေးမသုံးတာ
-  "skipLibCheck": true, // Library တွေရဲ့ type ကို ကျော်ခိုင်းတာ (မြန်အောင်လို့)
-  "forceConsistentCasingInFileNames": true
+    "node_modules"
+  ]
 }

@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model batch_students {
+  id         Int       @id @default(autoincrement())
+  batch_id   Int?
+  student_id Int?
+  status     String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+  deleted_at DateTime?
+  created_by Int?      @default(1)
+  updated_by Int?
+  deleted_by Int?
+  batches    batches?  @relation(fields: [batch_id], references: [id])
+  students   students? @relation(fields: [student_id], references: [id])
+
+  @@index([batch_id], map: "batch_students_batch_id_fkey")
+  @@index([student_id], map: "batch_students_student_id_fkey")
+}
+
+model batches {
+  id                 Int                  @id @default(autoincrement())
+  class_type         String               @db.VarChar(100)
+  batch_name         String               @db.VarChar(255)
+  course_id          Int?
+  lecturer_id        Int?
+  start_date         DateTime             @db.Date
+  end_date           DateTime             @db.Date
+  remind_date        DateTime             @db.Date
+  day_per_week       Int
+  total_hour         Int?
+  start_time         String               @db.VarChar(50)
+  end_time           String               @db.VarChar(50)
+  days               String?              @db.VarChar(255)
+  meeting_link       String?              @db.VarChar(255)
+  course_fee         Decimal              @db.Decimal(10, 2)
+  status             String
+  created_at         DateTime?            @default(now())
+  updated_at         DateTime?            @default(now())
+  deleted_at         DateTime?
+  created_by         Int?                 @default(1)
+  updated_by         Int?
+  deleted_by         Int?
+  batch_students     batch_students[]
+  courses            courses?             @relation(fields: [course_id], references: [id])
+  lecturers          lecturers?           @relation(fields: [lecturer_id], references: [id])
+  day_outlines       day_outlines[]
+  ratings            ratings[]
+  student_Attendance student_Attendance[]
+
+  @@index([course_id], map: "batches_course_id_fkey")
+  @@index([lecturer_id], map: "batches_lecturer_id_fkey")
+}
+
+model config {
+  id    Int     @id @default(autoincrement())
+  key   String? @db.VarChar(255)
+  value String? @db.Text
+}
+
+model course_outlines {
+  id          Int       @id @default(autoincrement())
+  course_id   Int?
+  content     String?   @db.VarChar(255)
+  order_index Int?
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now())
+  deleted_at  DateTime?
+  created_by  Int?      @default(1)
+  updated_by  Int?
+  deleted_by  Int?
+  courses     courses?  @relation(fields: [course_id], references: [id])
+
+  @@index([course_id], map: "course_outlines_course_id_fkey")
+}
+
+model courses {
+  id              Int               @id @default(autoincrement())
+  name            String?           @db.VarChar(255)
+  description     String?           @db.Text
+  preRequisites   Int?
+  created_at      DateTime?         @default(now())
+  updated_at      DateTime?         @default(now())
+  deleted_at      DateTime?
+  created_by      Int?              @default(1)
+  updated_by      Int?
+  deleted_by      Int?
+  batches         batches[]
+  course_outlines course_outlines[]
+  courses         courses?          @relation("coursesTocourses", fields: [preRequisites], references: [id])
+  other_courses   courses[]         @relation("coursesTocourses")
+
+  @@index([preRequisites], map: "courses_preRequisites_fkey")
+}
+
+model day_outlines {
+  id           Int       @id @default(autoincrement())
+  batch_id     Int?
+  day          Int?
+  date         DateTime? @db.Date
+  outlines     String?   @db.Text
+  youtube_link String?   @db.VarChar(255)
+  created_at   DateTime? @default(now())
+  updated_at   DateTime? @default(now())
+  deleted_at   DateTime?
+  created_by   Int?      @default(1)
+  updated_by   Int?
+  deleted_by   Int?
+  batches      batches?  @relation(fields: [batch_id], references: [id])
+
+  @@index([batch_id], map: "day_outlines_batch_id_fkey")
+}
+
+model lecturers {
+  id                 Int                  @id @default(autoincrement())
+  user_id            Int?
+  specialization     String?              @db.Text
+  qualification      String?              @db.Text
+  experience         String?              @db.Text
+  bio                String?              @db.Text
+  created_at         DateTime?            @default(now())
+  updated_at         DateTime?            @default(now())
+  deleted_at         DateTime?
+  created_by         Int?                 @default(1)
+  updated_by         Int?
+  deleted_by         Int?
+  batches            batches[]
+  users              users?               @relation(fields: [user_id], references: [id])
+  student_Attendance student_Attendance[]
+
+  @@index([user_id], map: "lecturers_user_id_fkey")
+}
+
+model ratings {
+  id         Int       @id @default(autoincrement())
+  batch_id   Int?
+  rating     Int?
+  feedback   String?
+  student_id Int?
+  created_at DateTime? @default(now())
+  created_by Int?      @default(1)
+  deleted_at DateTime?
+  deleted_by Int?
+  updated_at DateTime? @default(now())
+  updated_by Int?
+  batches    batches?  @relation(fields: [batch_id], references: [id])
+  students   students? @relation(fields: [student_id], references: [id])
+
+  @@index([batch_id], map: "ratings_batch_id_fkey")
+  @@index([student_id], map: "ratings_student_id_fkey")
+}
+
+model roles {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?   @db.Text
+  created_at  DateTime? @default(now())
+  created_by  Int?      @default(1)
+  deleted_at  DateTime?
+  deleted_by  Int?
+  updated_at  DateTime? @default(now())
+  updated_by  Int?
+  users       users[]
+}
+
+model student_Attendance {
+  id          Int        @id @default(autoincrement())
+  student_id  Int?
+  batch_id    Int?
+  lecturer_id Int?
+  date        DateTime?  @db.Date
+  status      Boolean
+  created_at  DateTime?  @default(now())
+  batches     batches?   @relation(fields: [batch_id], references: [id])
+  lecturers   lecturers? @relation(fields: [lecturer_id], references: [id])
+  students    students?  @relation(fields: [student_id], references: [id])
+
+  @@unique([student_id, batch_id, lecturer_id, date], map: "student_Attendance_unique_comp")
+  @@index([batch_id], map: "student_Attendance_batch_id_fkey")
+  @@index([lecturer_id], map: "student_Attendance_lecturer_id_fkey")
+  @@index([student_id], map: "student_Attendance_student_id_fkey")
+}
+
+model students {
+  id                 Int                  @id @default(autoincrement())
+  user_id            Int?
+  created_at         DateTime?            @default(now())
+  updated_at         DateTime?            @default(now())
+  deleted_at         DateTime?
+  created_by         Int?                 @default(1)
+  updated_by         Int?
+  deleted_by         Int?
+  batch_students     batch_students[]
+  ratings            ratings[]
+  student_Attendance student_Attendance[]
+  users              users?               @relation(fields: [user_id], references: [id])
+
+  @@index([user_id], map: "students_user_id_fkey")
+}
+
+model users {
+  id         Int         @id @default(autoincrement())
+  role_id    Int?
+  name       String
+  email      String      @unique
+  password   String?     @db.VarChar(255)
+  phone_no   String?     @db.VarChar(50)
+  gender     String?     @db.VarChar(20)
+  address    String?     @db.Text
+  status     String?     @db.VarChar(50)
+  created_at DateTime?   @default(now())
+  updated_at DateTime?   @default(now())
+  deleted_at DateTime?
+  created_by Int?        @default(1)
+  updated_by Int?
+  deleted_by Int?
+  lecturers  lecturers[]
+  students   students[]
+  roles      roles?      @relation(fields: [role_id], references: [id])
+
+  @@index([role_id], map: "users_role_id_fkey")
+}
