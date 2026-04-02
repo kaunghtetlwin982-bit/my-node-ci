@@ -45,25 +45,27 @@ jobs:
 
       - name: Build TypeScript
         run: npm run build
-        
+
       - name: Wait for MySQL to be ready
         run: sleep 20
 
       - name: Prisma Generate & Migrate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Secret ကို မသုံးဘဲ Direct Localhost URL ကို ရေးပေးလိုက်ပါ
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/sms_new"
         run: |
           npx prisma generate
           npx prisma db push
 
       - name: Run Tests
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_USER: ${{ secrets.DATABASE_USER }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          # ဒီနေရာမှာလည်း Localhost IP တွေကိုပဲ သုံးရပါမယ်
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/sms_new"
+          DATABASE_HOST: "127.0.0.1"
+          DATABASE_USER: "root"
+          DATABASE_PASSWORD: "root"
+          DATABASE_NAME: "sms_new"
+          DATABASE_PORT: "3306"
         run: NODE_OPTIONS=--experimental-vm-modules npm test
 
   # ဒုတိယ Job: Test အောင်ရင် Server ပေါ်တင်မယ့်အပိုင်း (CD)
