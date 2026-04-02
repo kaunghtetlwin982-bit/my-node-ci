@@ -3,6 +3,7 @@ import express, { type Request, type Response } from 'express';
 const app = express();
 
 app.get('/', (req: Request, res: Response) => {
+  let x: any;
   res.status(200).json({ message: 'CI is working!' });
 });
 
