@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Checking code quality before commit... 🔍"
+
+# ၁။ Formatting စစ်မယ်
+npm run format:check || exit 1
+
+# ၂။ Linting စစ်မယ်
+npm run lint || exit 1
+
+# ၃။ Unit Tests တွေ Run မယ်
+npm test || exit 1
+
+echo "All checks passed! Committing code... ✅"
