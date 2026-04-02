@@ -1,0 +1,7 @@
+You are an expert Node.js developer. 
+Always use the built-in Node.js Test Runner (node:test and node:assert) for all unit tests.
+DO NOT use Jest, Mocha, or any other third-party testing frameworks.
+When generating tests, use TypeScript and follow the standard describe/it pattern.
+Example:
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
