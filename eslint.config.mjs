@@ -1,6 +1,7 @@
 import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 export default [
     // ၁။ စစ်ဆေးစရာမလိုတဲ့ Folder တွေကို ချန်လှပ်ထားမယ်
@@ -26,5 +27,6 @@ export default [
             "@typescript-eslint/no-explicit-any": "warn",
             "no-undef": "error"
         }
-    }
+    },
+    eslintConfigPrettier,
 ];
