@@ -90,3 +90,31 @@ jobs:
             
             # ၄။ PM2 နဲ့ App ကို Restart ချမယ်
             pm2 restart my-node-ci || pm2 start dist/app.js --name "my-node-ci"
+    # အောင်မြင်ရင် Notification ပို့မယ်
+      - name: Send Success Notification
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ Deployment Success!
+            ------------------------
+            Project: ${{ github.repository }}
+            Commit: ${{ github.event.head_commit.message }}
+            Author: ${{ github.actor }}
+            
+            Server is now updated! 🚀
+
+      # ကျရှုံးရင် (Error တက်ရင်) Notification ပို့မယ်
+      - name: Send Failure Notification
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ❌ Deployment Failed!
+            ------------------------
+            Project: ${{ github.repository }}
+            Check logs here: https://github.com/${{ github.repository }}/actions
