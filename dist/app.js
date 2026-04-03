@@ -1,6 +1,7 @@
 import express, {} from 'express';
 const app = express();
 app.get('/', (req, res) => {
+    console.log('hello');
     // let x: any;
     res.status(200).json({ message: 'CI is working!' });
 });
