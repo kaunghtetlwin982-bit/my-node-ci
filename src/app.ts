@@ -3,9 +3,9 @@ import express, { type Request, type Response } from 'express';
 const app = express();
 
 app.get('/', (req: Request, res: Response) => {
-  console.log('hello')
-  // let x: any;
-  res.status(200).json({ message: 'CI is working!' });
+  console.log('hello'),
+    // let x: any;
+    res.status(200).json({ message: 'CI is working!' });
 });
 
 const PORT = 3000;
